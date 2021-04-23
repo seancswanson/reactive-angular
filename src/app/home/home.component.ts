@@ -5,6 +5,7 @@ import {catchError, delay, delayWhen, filter, finalize, map, retryWhen, shareRep
 import {HttpClient} from '@angular/common/http';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {CourseDialogComponent} from '../course-dialog/course-dialog.component';
+import { CoursesService } from '../service/courses.service';
 
 
 @Component({
@@ -21,7 +22,7 @@ export class HomeComponent implements OnInit {
   advancedCourses: Course[];
 
   // Dependency injection
-  constructor(private dialog: MatDialog) {
+  constructor(private coursesService:CoursesService, private dialog: MatDialog) {
 
   }
 
