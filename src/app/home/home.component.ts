@@ -14,6 +14,7 @@ import {CourseDialogComponent} from '../course-dialog/course-dialog.component';
 })
 export class HomeComponent implements OnInit {
 
+  // Mutable State Variables
   beginnerCourses: Course[];
 
   advancedCourses: Course[];
@@ -27,6 +28,8 @@ export class HomeComponent implements OnInit {
 
     this.http.get('/api/courses')
       .subscribe(
+
+        // Callback when this observable successfully emits a value:
         res => {
 
           const courses: Course[] = res["payload"].sort(sortCoursesBySeqNo);
