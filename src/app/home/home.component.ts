@@ -15,12 +15,13 @@ import {CourseDialogComponent} from '../course-dialog/course-dialog.component';
 export class HomeComponent implements OnInit {
 
   // Mutable State Variables
+  // We'll want to figure a better way to handle our state variables.
   beginnerCourses: Course[];
 
   advancedCourses: Course[];
 
-
-  constructor(private http: HttpClient, private dialog: MatDialog) {
+  // Dependency injection
+  constructor(private dialog: MatDialog) {
 
   }
 
@@ -30,6 +31,7 @@ export class HomeComponent implements OnInit {
       .subscribe(
 
         // Callback when this observable successfully emits a value:
+        // We'll want to work on converting this to a reactive style implementation.
         res => {
 
           const courses: Course[] = res["payload"].sort(sortCoursesBySeqNo);
