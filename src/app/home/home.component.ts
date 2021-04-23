@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Course, sortCoursesBySeqNo} from '../model/course';
-import {interval, noop, Observable, of, throwError, timer} from 'rxjs';
+import {interval, noop, Observable, of, pipe, throwError, timer} from 'rxjs';
 import {catchError, delay, delayWhen, filter, finalize, map, retryWhen, shareReplay, tap} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
@@ -17,32 +17,34 @@ export class HomeComponent implements OnInit {
 
   // Mutable State Variables
   // We'll want to figure a better way to handle our state variables.
-  beginnerCourses: Course[];
+  beginnerCourses$: Observable<Course[]>;
 
-  advancedCourses: Course[];
+  advancedCourses$: Observable<Course[]>;
 
   // Dependency injection
-  constructor(private coursesService:CoursesService, private dialog: MatDialog) {
+  constructor(
+    private coursesService:CoursesService,
+    private dialog: MatDialog
+    ) {
 
   }
 
   ngOnInit() {
+    const courses$ = this.coursesService.loadAllCourses();
 
-    this.http.get('/api/courses')
-      .subscribe(
+    this.beginnerCourses$ = courses$
+      .pipe(
+        map(courses => {
+         return courses.filter(course => course.category == 'BEGINNER').sort(sortCoursesBySeqNo)
+        })
+    );
 
-        // Callback when this observable successfully emits a value:
-        // We'll want to work on converting this to a reactive style implementation.
-        res => {
-
-          const courses: Course[] = res["payload"].sort(sortCoursesBySeqNo);
-
-          this.beginnerCourses = courses.filter(course => course.category == "BEGINNER");
-
-          this.advancedCourses = courses.filter(course => course.category == "ADVANCED");
-
-        });
-
+    this.advancedCourses$ = courses$
+      .pipe(
+        map(courses => {
+         return courses.filter(course => course.category == 'ADVANCED').sort(sortCoursesBySeqNo)
+        })
+    );
   }
 
   editCourse(course: Course) {
