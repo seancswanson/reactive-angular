@@ -30,19 +30,27 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    const courses$ = this.coursesService.loadAllCourses();
+    const courses$ = this.coursesService.loadAllCourses()
+      .pipe(
+        map(courses => courses.sort(sortCoursesBySeqNo))
+      );
 
+        // Another HTTP Request. We want to keep this response in memory and share it to who wants the data.
+      courses$.subscribe(value => console.log(value));
+
+      //This triggers an HTTP request by means of async pipe subscription in the template.
     this.beginnerCourses$ = courses$
       .pipe(
         map(courses => {
-         return courses.filter(course => course.category == 'BEGINNER').sort(sortCoursesBySeqNo)
+         return courses.filter(course => course.category == 'BEGINNER')
         })
     );
 
+    //This triggers another HTTP request... we should fix that.
     this.advancedCourses$ = courses$
       .pipe(
         map(courses => {
-         return courses.filter(course => course.category == 'ADVANCED').sort(sortCoursesBySeqNo)
+         return courses.filter(course => course.category == 'ADVANCED')
         })
     );
   }
