@@ -14,7 +14,6 @@ import { CoursesService } from '../service/courses.service';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-
   // Mutable State Variables
   // We'll want to figure a better way to handle our state variables.
   beginnerCourses$: Observable<Course[]>;
@@ -24,7 +23,6 @@ export class HomeComponent implements OnInit {
   // Dependency injection
   constructor(
     private coursesService:CoursesService,
-    private dialog: MatDialog
     ) {
 
   }
@@ -35,10 +33,6 @@ export class HomeComponent implements OnInit {
         map(courses => courses.sort(sortCoursesBySeqNo))
       );
 
-        // Another HTTP Request. We want to keep this response in memory and share it to who wants the data.
-      courses$.subscribe(value => console.log(value));
-
-      //This triggers an HTTP request by means of async pipe subscription in the template.
     this.beginnerCourses$ = courses$
       .pipe(
         map(courses => {
@@ -46,7 +40,6 @@ export class HomeComponent implements OnInit {
         })
     );
 
-    //This triggers another HTTP request... we should fix that.
     this.advancedCourses$ = courses$
       .pipe(
         map(courses => {
@@ -55,19 +48,7 @@ export class HomeComponent implements OnInit {
     );
   }
 
-  editCourse(course: Course) {
 
-    const dialogConfig = new MatDialogConfig();
-
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    dialogConfig.width = "400px";
-
-    dialogConfig.data = course;
-
-    const dialogRef = this.dialog.open(CourseDialogComponent, dialogConfig);
-
-  }
 
 }
 
