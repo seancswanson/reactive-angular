@@ -9,6 +9,8 @@ import { Course } from '../model/course';
   styleUrls: ['./courses-card-list.component.scss']
 })
 export class CoursesCardListComponent implements OnInit {
+
+  // This is an input property of this component.
   @Input()
   courses: Course[] = [];
 
