@@ -43,6 +43,14 @@ export class CourseDialogComponent implements AfterViewInit {
 
       const changes = this.form.value;
 
+      this.coursesService.saveCourse(this.course.id, changes)
+      .subscribe(
+        (val) => {
+          this.dialogRef.close(val);
+        }
+      );
+      console.log('saved!')
+
     }
 
     close() {
