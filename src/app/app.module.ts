@@ -73,7 +73,7 @@ import { CoursesCardListComponent } from './courses-card-list/courses-card-list.
     MatSelectModule,
     MatDatepickerModule,
     MatMomentDateModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   providers: [
   ],
