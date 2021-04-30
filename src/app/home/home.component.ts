@@ -1,18 +1,27 @@
-import {Component, OnInit} from '@angular/core';
-import {Course, sortCoursesBySeqNo} from '../model/course';
-import {interval, noop, Observable, of, pipe, throwError, timer} from 'rxjs';
-import {catchError, delay, delayWhen, filter, finalize, map, retryWhen, shareReplay, tap} from 'rxjs/operators';
-import {HttpClient} from '@angular/common/http';
-import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
-import {CourseDialogComponent} from '../course-dialog/course-dialog.component';
-import { CoursesService } from '../service/courses.service';
-import { LoadingService } from '../loading/loading.service';
-
+import { Component, OnInit } from "@angular/core";
+import { Course, sortCoursesBySeqNo } from "../model/course";
+import { interval, noop, Observable, of, pipe, throwError, timer } from "rxjs";
+import {
+  catchError,
+  delay,
+  delayWhen,
+  filter,
+  finalize,
+  map,
+  retryWhen,
+  shareReplay,
+  tap,
+} from "rxjs/operators";
+import { HttpClient } from "@angular/common/http";
+import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
+import { CourseDialogComponent } from "../course-dialog/course-dialog.component";
+import { CoursesService } from "../service/courses.service";
+import { LoadingService } from "../loading/loading.service";
 
 @Component({
-  selector: 'home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  selector: "home",
+  templateUrl: "./home.component.html",
+  styleUrls: ["./home.component.css"],
 })
 export class HomeComponent implements OnInit {
   // Mutable State Variables
@@ -23,43 +32,31 @@ export class HomeComponent implements OnInit {
 
   // Dependency injection
   constructor(
-    private coursesService:CoursesService,
-    private loadingService:LoadingService
-    ) {
-
-  }
+    private coursesService: CoursesService,
+    private loadingService: LoadingService
+  ) {}
 
   ngOnInit() {
     this.reloadCourses();
   }
 
   reloadCourses() {
-    this.loadingService.loadingOn();
+    const courses$ = this.coursesService
+      .loadAllCourses()
+      .pipe(map((courses) => courses.sort(sortCoursesBySeqNo)));
 
-    const courses$ = this.coursesService.loadAllCourses()
-    .pipe(
-      map(courses => courses.sort(sortCoursesBySeqNo)),
-      finalize(() => this.loadingService.loadingOff())
+    const loadCourses$ = this.loadingService.showLoaderUntilComplete(courses$);
+
+    this.beginnerCourses$ = loadCourses$.pipe(
+      map((courses) => {
+        return courses.filter((course) => course.category == "BEGINNER");
+      })
     );
 
-  this.beginnerCourses$ = courses$
-    .pipe(
-      map(courses => {
-       return courses.filter(course => course.category == 'BEGINNER')
+    this.advancedCourses$ = loadCourses$.pipe(
+      map((courses) => {
+        return courses.filter((course) => course.category == "ADVANCED");
       })
-  );
-
-  this.advancedCourses$ = courses$
-    .pipe(
-      map(courses => {
-       return courses.filter(course => course.category == 'ADVANCED')
-      })
-  );
+    );
   }
-
-
 }
-
-
-
-
